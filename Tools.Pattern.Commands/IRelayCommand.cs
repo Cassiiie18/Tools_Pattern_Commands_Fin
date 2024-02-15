@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace Tools.Pattern.Commands
 {
-    public interface ICommand
+    public interface IRelayCommand
     {
         void Execute();
+        bool CanExecute();
+        void Undo();
     }
 }

@@ -1,11 +1,6 @@
-﻿using Models.Commands;
-using Models.Entities;
+﻿using Models.Entities;
 using Models.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Tools.Pattern.Commands;
 
 namespace Models.Services
 {
@@ -30,13 +25,26 @@ namespace Models.Services
 
         public void Insert(Personne personne)
         {
-            AddPersonCommand command = new AddPersonCommand(_items, personne);
+            ICommand command = new RelayCommand(() => Add(personne));
             command.Execute();
+        }
+
+        private void Add(Personne personne)
+        {
+            personne.Id = _items.Count == 0 ? 1 : _items.Max(p => p.Id) + 1;
+            _items.Add(personne);
         }
 
         public void Delete(int id)
         {
-            throw new NotImplementedException();
+            ICommand command = new RelayCommand(() =>
+            {
+                Personne? personne = _items.SingleOrDefault(p => p.Id == id);
+                if (personne is null) return;
+                _items.Remove(personne);
+            });
+
+            command.Execute();
         }
     }
 }
